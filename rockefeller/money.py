@@ -114,7 +114,7 @@ class Money(namedtuple('Money', 'amount currency')):
             result = Money(0, self.currency)
         return result
 
-    def get_exchange_rate_to(self, currency, indirection_currency=None):
+    def get_exchange_rate_to(self, currency, indirection_currency=None, date=None):
         """Get exchange rate of the currency of this money relatively to
         ``currency``.
 
@@ -122,15 +122,17 @@ class Money(namedtuple('Money', 'amount currency')):
             :class:`~rockefeller.currency.Currency` instance.
         :param indirection_currency: Use this currency as the indirection
             currency. :class:`~rockefeller.currency.Currency` instance.
+        :param date: Date for the exchange rate.
+            :class:`datetime.date`.
 
         :return: Exchange rate as a ``decimal`` if found, else ``None``.
         """
-        rate = get_exchange_rate(self.currency, currency)
+        rate = get_exchange_rate(self.currency, currency, date)
         if rate is None:
             if not indirection_currency and Money.indirection_currency:
                 indirection_currency = Money.indirection_currency
-            rate_from_base = get_exchange_rate(self.currency, indirection_currency)
-            rate_base_to = get_exchange_rate(indirection_currency, currency)
+            rate_from_base = get_exchange_rate(self.currency, indirection_currency, date)
+            rate_base_to = get_exchange_rate(indirection_currency, currency, date)
             if rate_from_base and rate_base_to:
                 rate = rate_from_base * rate_base_to
 
@@ -141,7 +143,7 @@ class Money(namedtuple('Money', 'amount currency')):
         return round_amount(self.amount, self.currency)
 
     def exchange_to(self, currency, indirection_currency=None,
-                    exchange_rate=None):
+                    exchange_rate=None, date=None):
         """Convert this money into money of another currency.
 
         :param currency: Convert this money into this currency.
@@ -150,6 +152,8 @@ class Money(namedtuple('Money', 'amount currency')):
             currency. :class:`~rockefeller.currency.Currency` instance.
         :param exchange_rate: Use this exchange rate instead of trying to find
             one.
+        :param date: Date for the exchange rate.
+            :class:`datetime.date`.
 
         :return: Money in ``currency`` currency.
             :class:`~rockefeller.money.Money` instance.
@@ -159,13 +163,13 @@ class Money(namedtuple('Money', 'amount currency')):
         """
         if exchange_rate is None:
             exchange_rate = self.get_exchange_rate_to(
-                currency, indirection_currency=indirection_currency)
+                currency, indirection_currency=indirection_currency, date=date)
         else:
             exchange_rate = to_decimal(exchange_rate)
 
         if exchange_rate is None:
-            raise ExchangeError('Exchange rate {}-{} not defined.'.format(
-                self.currency, currency))
+            raise ExchangeError('Exchange rate {}-{}@{} not defined.'.format(
+                self.currency, currency, date))
 
         amount = round_amount(self.amount * exchange_rate, currency)
         return self.__class__(amount=amount, currency=currency)
