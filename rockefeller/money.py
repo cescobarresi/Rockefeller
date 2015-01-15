@@ -161,6 +161,9 @@ class Money(namedtuple('Money', 'amount currency')):
         :raises: :class:`~rockefeller.exceptions.ExchangeError`
             if Exchange rate bettween currencies is not defined.
         """
+        if self.currency == currency:
+            # requested exchange to current currency, no need to convert.
+            return self
         if exchange_rate is None:
             exchange_rate = self.get_exchange_rate_to(
                 currency, indirection_currency=indirection_currency, date=date)
