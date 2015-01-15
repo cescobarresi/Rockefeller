@@ -26,7 +26,7 @@ class PyTest(TestCommand):
 
 
 setup(name="rockefeller",
-      version="1.2.2",
+      version="1.2.3",
       description="Money, currencies and exchange rates library.",
       long_description=README,
       author="ikame",
@@ -37,6 +37,7 @@ setup(name="rockefeller",
       tests_require=["pytest", "mock"],
       cmdclass={"test": PyTest},
       keywords="money currency exchange rates",
+      py_modules=['rockefeller'],
       classifiers=[
           "Environment :: Plugins",
           "Environment :: Console",
