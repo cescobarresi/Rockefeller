@@ -37,7 +37,7 @@ setup(name="rockefeller",
       tests_require=["pytest", "mock"],
       cmdclass={"test": PyTest},
       keywords="money currency exchange rates",
-      py_modules=['rockefeller'],
+      packages=['rockefeller'],
       classifiers=[
           "Environment :: Plugins",
           "Environment :: Console",
