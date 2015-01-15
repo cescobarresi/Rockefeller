@@ -25,7 +25,7 @@ class PyTest(TestCommand):
         sys.exit(errno)
 
 
-setup(name="Rockefeller",
+setup(name="rockefeller",
       version="1.2.2",
       description="Money, currencies and exchange rates library.",
       long_description=README,
