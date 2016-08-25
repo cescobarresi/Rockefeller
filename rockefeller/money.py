@@ -127,14 +127,9 @@ class Money(namedtuple('Money', 'amount currency')):
 
         :return: Exchange rate as a ``decimal`` if found, else ``None``.
         """
-        rate = get_exchange_rate(self.currency, currency, date)
-        if rate is None:
-            if not indirection_currency and Money.indirection_currency:
-                indirection_currency = Money.indirection_currency
-            rate_from_base = get_exchange_rate(self.currency, indirection_currency, date)
-            rate_base_to = get_exchange_rate(indirection_currency, currency, date)
-            if rate_from_base and rate_base_to:
-                rate = rate_from_base * rate_base_to
+        if not indirection_currency and Money.indirection_currency:
+            indirection_currency = Money.indirection_currency
+        rate = get_exchange_rate(self.currency, currency, indirection_currency, date)
 
         return rate
 

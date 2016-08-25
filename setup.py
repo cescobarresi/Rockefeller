@@ -25,13 +25,14 @@ class PyTest(TestCommand):
         sys.exit(errno)
 
 
+# Forked from http://ikame.github.com/Rockefeller/
 setup(name="rockefeller",
-      version="1.2.3",
+      version="1.3.0",
       description="Money, currencies and exchange rates library.",
       long_description=README,
-      author="ikame",
-      author_email="anler86@gmail.com",
-      url="http://ikame.github.com/Rockefeller/",
+      author='cescobarresi',
+      author_email="cescobarresi@gmail.com",
+      url="http://cescobarresi.github.com/Rockefeller/",
       license="MIT",
       install_requires=["six"],
       tests_require=["pytest", "mock"],

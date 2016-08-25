@@ -28,8 +28,9 @@ class ExchangeRate(namedtuple('ExchangeRate', 'code_from code_to rate date')):
 
 
 class ExchangeRates(object):
-    def __init__(self, store):
+    def __init__(self, store, indirection_currency=None):
         self.store = store
+        self.indirection_currency = indirection_currency
 
     def add_exchange_rate(self, base_currency, currency, exchange_rate, date=None):
         """Store an exchange rate between two currencies.
@@ -56,31 +57,41 @@ class ExchangeRates(object):
         """
         self.store.remove_exchange_rate(base_currency, currency, date)
 
-    def get_exchange_rate(self, base_currency, currency, date=None):
+    def get_exchange_rate(self, base_currency, currency, indirection_currency=None, date=None):
         """Get exchange rate of a currency relatively to another one.
 
         If rate for ``currency`` relatively to ``base_currency`` can't be
         found the rate for ``base_currency`` relatively to ``currency`` will
-        be searched and if it's found rate is going to be its inverse.
+        be searched and if it's found rate is going to be its inverse. Otherwise
+        will try with indirection_currency if is set.
 
         :param base_currency: Currency used as the base.
             :class:`~rockefeller.currency.Currency` instance.
         :param currency: Currency you want to know its exchange rate in
             relation to ``base_currency``.
             :class:`~rockefeller.currency.Currency` instance.
+        :param indirection_currency: Use this currency as the indirection
+            currency. :class:`~rockefeller.currency.Currency` instance.
         :param date: Date for the exchange rate.
             :class:`datetime.date`.
 
         :return: Exchange rate as a ``decimal``.
         """
+        # get rate from store
         rate = self.store.get_exchange_rate(base_currency, currency, date)
-        if rate is None:
-            inverse = self.store.get_exchange_rate(currency, base_currency, date)
-            if inverse:
-                rate = decimal.Decimal(1) / decimal.Decimal(inverse)
-        else:
-            rate = decimal.Decimal(str(rate))
-
+        if rate:
+            return decimal.Decimal(str(rate))
+        # else try with inverse
+        inverse = self.store.get_exchange_rate(currency, base_currency, date)
+        if inverse:
+            return decimal.Decimal(1) / decimal.Decimal(inverse)
+        # else try with indirection_currency
+        if indirection_currency:
+            rate_from_base = get_exchange_rate(self.currency, indirection_currency, date)
+            rate_base_to = get_exchange_rate(indirection_currency, currency, date)
+            if rate_from_base and rate_base_to:
+                rate = rate_from_base * rate_base_to
+                return decimal.Decimal(str(rate))
         return rate
 
 
