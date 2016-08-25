@@ -28,9 +28,8 @@ class ExchangeRate(namedtuple('ExchangeRate', 'code_from code_to rate date')):
 
 
 class ExchangeRates(object):
-    def __init__(self, store, indirection_currency=None):
+    def __init__(self, store):
         self.store = store
-        self.indirection_currency = indirection_currency
 
     def add_exchange_rate(self, base_currency, currency, exchange_rate, date=None):
         """Store an exchange rate between two currencies.
