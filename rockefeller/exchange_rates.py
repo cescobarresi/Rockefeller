@@ -86,8 +86,8 @@ class ExchangeRates(object):
             return decimal.Decimal(1) / decimal.Decimal(inverse)
         # else try with indirection_currency
         if indirection_currency:
-            rate_from_base = get_exchange_rate(base_currency, indirection_currency, date)
-            rate_base_to = get_exchange_rate(indirection_currency, currency, date)
+            rate_from_base = get_exchange_rate(base_currency, indirection_currency, date=date)
+            rate_base_to = get_exchange_rate(indirection_currency, currency, date=date)
             if rate_from_base and rate_base_to:
                 rate = rate_from_base * rate_base_to
                 return decimal.Decimal(str(rate))
